@@ -1,9 +1,7 @@
-import 'dart:math';
-
-import 'package:dartz/dartz.dart' hide State;
 import 'package:flutter/material.dart';
-import 'package:reciepe_app/error/failure.dart';
-import 'package:reciepe_app/models/category_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:reciepe_app/cubit/category_cubit.dart';
+import 'package:reciepe_app/cubit/meal_cubit.dart';
 import 'package:reciepe_app/services/api_service.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_bar.dart';
@@ -18,199 +16,152 @@ class SeafoodScreen extends StatefulWidget {
 }
 
 class _SeafoodScreenState extends State<SeafoodScreen> {
-  final List<Meal> data = [
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "1",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-    Meal(
-      idMeal: "2",
-      strMeal: "Seafood",
-      strMealThumb: "https://www.themealdb.com/images/category/Seafood.png",
-    ),
-  ];
   late ApiService apiService;
-  // String _searchQuery = '';
+  late CategoryCubit categoryCubit;
+  late MealCubit mealCubit;
   int _currentNavIndex = 1;
+
   @override
   void initState() {
     super.initState();
     apiService = ApiService();
+    categoryCubit = CategoryCubit(apiService)..getCategories();
+    mealCubit = MealCubit(apiService)..getMeals("Seafood");
+  }
+
+  @override
+  void dispose() {
+    categoryCubit.close();
+    mealCubit.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 226, 227, 227),
-      appBar: CustomAppBar(
-        title: 'Seafood',
-        onMenuPressed: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Menu tapped')));
-        },
-        onProfilePressed: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Profile tapped')));
-        },
-      ),
-      body: Column(
-        children: [
-          CustomSearchBar(
-            hintText: 'Search in Seafood',
-            onChanged: (query) {
-              setState(() {
-                // _searchQuery = query;
-              });
-            },
-          ),
-          FutureBuilder<Either<Failure, List<CategoryModel>>>(
-            future: apiService.getCategories(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text(snapshot.error.toString()));
-              } else if (snapshot.hasData) {
-                final result = snapshot.data;
-                return result!.fold(
-                  (failure) {
-                    return Text(
-                      failure.errorMessage,
-                      style: TextStyle(color: Colors.red),
-                    );
-                  },
-                  (categories) {
-                    // final categorie = categories;
-                    return SizedBox(
-                      height: 50,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          final data = categories; //! List of Categories
-                          final item = data[index]; //! One Category
-
-                          return Chip(label: Text(item.strCategory!));
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return SizedBox(width: 10);
-                        },
-                        itemCount: data.length,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider.value(value: categoryCubit),
+        BlocProvider.value(value: mealCubit),
+      ],
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 226, 227, 227),
+        appBar: CustomAppBar(
+          title: 'Seafood',
+          onMenuPressed: () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Menu tapped')));
+          },
+          onProfilePressed: () {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Profile tapped')));
+          },
+        ),
+        body: Column(
+          children: [
+            CustomSearchBar(
+              hintText: 'Search in Seafood',
+              onChanged: (query) {},
+            ),
+            BlocBuilder<CategoryCubit, CategoryState>(
+              builder: (context, state) {
+                if (state is CategoryLoading || state is CategoryInitial) {
+                  return const SizedBox(
+                    height: 50,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (state is CategoryError) {
+                  return SizedBox(
+                    height: 50,
+                    child: Center(
+                      child: Text(
+                        state.message,
+                        style: const TextStyle(color: Colors.red),
                       ),
-                    );
-                  },
-                );
-              } else {
-                return Container(color: Colors.blueGrey);
-              }
-            },
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.72,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 16,
-              ),
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                return RecipeCard(
-                  // meals: meals.meals![index],
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Selected: ${data[index].strMeal}'),
-                      ),
-                    );
-                  },
-                  meal: data[index],
-                );
+                    ),
+                  );
+                } else if (state is CategoryLoaded) {
+                  final categories = state.categories;
+                  return SizedBox(
+                    height: 50,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final item = categories[index];
+                        return GestureDetector(
+                          onTap: () {
+                            context
+                                .read<MealCubit>()
+                                .getMeals(item.strCategory!);
+                          },
+                          child: Chip(label: Text(item.strCategory!)),
+                        );
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(width: 10),
+                      itemCount: categories.length,
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
               },
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: _currentNavIndex,
-        onItemTapped: (index) {
-          setState(() {
-            _currentNavIndex = index;
-          });
-        },
+            Expanded(
+              child: BlocBuilder<MealCubit, MealState>(
+                builder: (context, state) {
+                  if (state is MealLoading || state is MealInitial) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (state is MealError) {
+                    return Center(
+                      child: Text(
+                        state.message,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  } else if (state is MealLoaded) {
+                    final meals = state.meals;
+                    return GridView.builder(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 0.72,
+                        crossAxisSpacing: 14,
+                        mainAxisSpacing: 16,
+                      ),
+                      itemCount: meals.length,
+                      itemBuilder: (context, index) {
+                        return RecipeCard(
+                          onTap: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content:
+                                    Text('Selected: ${meals[index].strMeal}'),
+                              ),
+                            );
+                          },
+                          meal: meals[index],
+                        );
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
+        ),
+        bottomNavigationBar: CustomBottomNavBar(
+          selectedIndex: _currentNavIndex,
+          onItemTapped: (index) {
+            setState(() {
+              _currentNavIndex = index;
+            });
+          },
+        ),
       ),
     );
   }
-}
-
-class RecipeData {
-  String title;
-  String imageUrl;
-  RecipeData(this.title, this.imageUrl);
 }

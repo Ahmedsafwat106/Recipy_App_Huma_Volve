@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:reciepe_app/models/meal_model.dart';
 import '../constants/app_colors.dart';
 
 class RecipeCard extends StatelessWidget {
@@ -19,50 +20,43 @@ class RecipeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Recipe Image with Favorite Badge Overlay
-          Stack(
-            children: [
-              // Image Container
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: AspectRatio(
-                  aspectRatio: 1.1,
-                  child: Image.network(
-                    meal.strMealThumb!,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Container(
-                        color: Colors.grey.shade200,
-                        child: const Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: AppColors.primaryBrown,
-                          ),
-                        ),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey.shade300,
-                        child: const Icon(
-                          Icons.restaurant,
-                          color: AppColors.primaryBrown,
-                          size: 32,
-                        ),
-                      );
-                    },
-                  ),
-                ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: AspectRatio(
+              aspectRatio: 1.1,
+              child: Image.network(
+                meal.strMealThumb,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    color: Colors.grey.shade200,
+                    child: const Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primaryBrown,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.shade300,
+                    child: const Icon(
+                      Icons.restaurant,
+                      color: AppColors.primaryBrown,
+                      size: 32,
+                    ),
+                  );
+                },
               ),
-            ],
+            ),
           ),
           const SizedBox(height: 8),
-          // Recipe Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: Text(
-              meal.strMeal!,
+              meal.strMeal,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -77,16 +71,4 @@ class RecipeCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class Meal {
-  String idMeal;
-  String strMeal;
-  String strMealThumb;
-
-  Meal({
-    required this.idMeal,
-    required this.strMeal,
-    required this.strMealThumb, 
-  });
 }
