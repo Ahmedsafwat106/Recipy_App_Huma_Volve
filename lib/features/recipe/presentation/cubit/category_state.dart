@@ -7,7 +7,7 @@ class CategoryInitial extends CategoryState {}
 class CategoryLoading extends CategoryState {}
 
 class CategoryLoaded extends CategoryState {
-  final List<CategoryModel> categories;
+  final List<CategoryEntity> categories;
   CategoryLoaded(this.categories);
 }
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:reciepe_app/screens/recipe_home_screen.dart';
+import 'core/di/service_locator.dart';
+import 'features/recipe/presentation/screens/seafood_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await setupServiceLocator();
   runApp(const RecipeApp());
 }
 
@@ -22,8 +25,7 @@ class RecipeApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      // home: const SeafoodScreen(),
-      home: SeafoodScreen(),
+      home: const SeafoodScreen(),
     );
   }
 }

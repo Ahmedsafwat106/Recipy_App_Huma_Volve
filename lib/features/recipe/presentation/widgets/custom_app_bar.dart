@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reciepe_app/constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -25,18 +25,12 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            // Left menu button
             IconButton(
               onPressed: onMenuPressed ?? () {},
-              icon: const Icon(
-                Icons.menu,
-                color: AppColors.primaryBrown,
-                size: 26,
-              ),
+              icon: const Icon(Icons.menu, color: AppColors.primaryBrown, size: 26),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
             ),
-            // Title
             Text(
               title,
               style: const TextStyle(
@@ -46,7 +40,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 letterSpacing: 0.2,
               ),
             ),
-            // User Avatar
             GestureDetector(
               onTap: onProfilePressed,
               child: Container(
@@ -54,10 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: AppColors.subtleBorder,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: AppColors.subtleBorder, width: 1.5),
                   image: const DecorationImage(
                     image: NetworkImage(
                       'https://images.unsplash.com/photo-1577219491135-ce391730fb2c?auto=format&fit=crop&w=150&q=80',

@@ -1,16 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reciepe_app/models/category_model.dart';
-import 'package:reciepe_app/services/api_service.dart';
+import '../../domain/entities/category_entity.dart';
+import '../../domain/usecases/get_categories_usecase.dart';
 
 part 'category_state.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
-  final ApiService apiService;
-  CategoryCubit(this.apiService) : super(CategoryInitial());
+  final GetCategoriesUseCase getCategoriesUseCase;
+  CategoryCubit(this.getCategoriesUseCase) : super(CategoryInitial());
 
   Future<void> getCategories() async {
     emit(CategoryLoading());
-    final result = await apiService.getCategories();
+    final result = await getCategoriesUseCase();
     result.fold(
       (failure) => emit(CategoryError(failure.errorMessage)),
       (categories) => emit(CategoryLoaded(categories)),

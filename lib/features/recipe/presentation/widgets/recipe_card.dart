@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:reciepe_app/models/meal_model.dart';
-import '../constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../domain/entities/meal_entity.dart';
 
 class RecipeCard extends StatelessWidget {
-  final Meal meal;
+  final MealEntity meal;
   final VoidCallback? onTap;
   final VoidCallback? onFavoriteToggle;
+
   const RecipeCard({
     super.key,
     required this.meal,
@@ -32,21 +33,14 @@ class RecipeCard extends StatelessWidget {
                   return Container(
                     color: Colors.grey.shade200,
                     child: const Center(
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppColors.primaryBrown,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primaryBrown),
                     ),
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey.shade300,
-                    child: const Icon(
-                      Icons.restaurant,
-                      color: AppColors.primaryBrown,
-                      size: 32,
-                    ),
+                    child: const Icon(Icons.restaurant, color: AppColors.primaryBrown, size: 32),
                   );
                 },
               ),

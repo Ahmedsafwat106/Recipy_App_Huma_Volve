@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:reciepe_app/cubit/category_cubit.dart';
-import 'package:reciepe_app/cubit/meal_cubit.dart';
-import 'package:reciepe_app/services/api_service.dart';
+import '../../../../core/di/service_locator.dart';
+import '../cubit/category_cubit.dart';
+import '../cubit/meal_cubit.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/custom_search_bar.dart';
 import '../widgets/recipe_card.dart';
@@ -16,7 +16,6 @@ class SeafoodScreen extends StatefulWidget {
 }
 
 class _SeafoodScreenState extends State<SeafoodScreen> {
-  late ApiService apiService;
   late CategoryCubit categoryCubit;
   late MealCubit mealCubit;
   int _currentNavIndex = 1;
@@ -24,9 +23,8 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
   @override
   void initState() {
     super.initState();
-    apiService = ApiService();
-    categoryCubit = CategoryCubit(apiService)..getCategories();
-    mealCubit = MealCubit(apiService)..getMeals("Seafood");
+    categoryCubit = sl<CategoryCubit>()..getCategories();
+    mealCubit = sl<MealCubit>()..getMeals("Seafood");
   }
 
   @override
@@ -48,36 +46,23 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
         appBar: CustomAppBar(
           title: 'Seafood',
           onMenuPressed: () {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Menu tapped')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Menu tapped')));
           },
           onProfilePressed: () {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Profile tapped')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile tapped')));
           },
         ),
         body: Column(
           children: [
-            CustomSearchBar(
-              hintText: 'Search in Seafood',
-              onChanged: (query) {},
-            ),
+            CustomSearchBar(hintText: 'Search in Seafood', onChanged: (query) {}),
             BlocBuilder<CategoryCubit, CategoryState>(
               builder: (context, state) {
                 if (state is CategoryLoading || state is CategoryInitial) {
-                  return const SizedBox(
-                    height: 50,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
+                  return const SizedBox(height: 50, child: Center(child: CircularProgressIndicator()));
                 } else if (state is CategoryError) {
                   return SizedBox(
                     height: 50,
-                    child: Center(
-                      child: Text(
-                        state.message,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    ),
+                    child: Center(child: Text(state.message, style: const TextStyle(color: Colors.red))),
                   );
                 } else if (state is CategoryLoaded) {
                   final categories = state.categories;
@@ -88,16 +73,11 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
                       itemBuilder: (context, index) {
                         final item = categories[index];
                         return GestureDetector(
-                          onTap: () {
-                            context
-                                .read<MealCubit>()
-                                .getMeals(item.strCategory!);
-                          },
+                          onTap: () => context.read<MealCubit>().getMeals(item.strCategory!),
                           child: Chip(label: Text(item.strCategory!)),
                         );
                       },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(width: 10),
+                      separatorBuilder: (context, index) => const SizedBox(width: 10),
                       itemCount: categories.length,
                     ),
                   );
@@ -111,21 +91,12 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
                   if (state is MealLoading || state is MealInitial) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is MealError) {
-                    return Center(
-                      child: Text(
-                        state.message,
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
+                    return Center(child: Text(state.message, style: const TextStyle(color: Colors.red)));
                   } else if (state is MealLoaded) {
                     final meals = state.meals;
                     return GridView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0,
-                        vertical: 8.0,
-                      ),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         childAspectRatio: 0.72,
                         crossAxisSpacing: 14,
@@ -136,10 +107,7 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
                         return RecipeCard(
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content:
-                                    Text('Selected: ${meals[index].strMeal}'),
-                              ),
+                              SnackBar(content: Text('Selected: ${meals[index].strMeal}')),
                             );
                           },
                           meal: meals[index],
@@ -155,11 +123,7 @@ class _SeafoodScreenState extends State<SeafoodScreen> {
         ),
         bottomNavigationBar: CustomBottomNavBar(
           selectedIndex: _currentNavIndex,
-          onItemTapped: (index) {
-            setState(() {
-              _currentNavIndex = index;
-            });
-          },
+          onItemTapped: (index) => setState(() => _currentNavIndex = index),
         ),
       ),
     );

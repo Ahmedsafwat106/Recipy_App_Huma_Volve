@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+import '../../../../core/constants/app_colors.dart';
 
 class FilterHeaderRow extends StatelessWidget {
   final int count;
   final VoidCallback? onFilterTap;
 
-  const FilterHeaderRow({
-    super.key,
-    required this.count,
-    this.onFilterTap,
-  });
+  const FilterHeaderRow({super.key, required this.count, this.onFilterTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +14,10 @@ class FilterHeaderRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Recipe Count
           Text(
             '$count Recipes Found',
-            style: const TextStyle(
-              color: AppColors.primaryBrown,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(color: AppColors.primaryBrown, fontSize: 15, fontWeight: FontWeight.w600),
           ),
-          // Filter Button
           InkWell(
             onTap: onFilterTap,
             borderRadius: BorderRadius.circular(8),
@@ -35,20 +25,9 @@ class FilterHeaderRow extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 4.0, vertical: 2.0),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.tune_rounded,
-                    color: AppColors.primaryBrown,
-                    size: 18,
-                  ),
+                  Icon(Icons.tune_rounded, color: AppColors.primaryBrown, size: 18),
                   SizedBox(width: 6),
-                  Text(
-                    'Filter',
-                    style: TextStyle(
-                      color: AppColors.primaryBrown,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text('Filter', style: TextStyle(color: AppColors.primaryBrown, fontSize: 15, fontWeight: FontWeight.w600)),
                 ],
               ),
             ),

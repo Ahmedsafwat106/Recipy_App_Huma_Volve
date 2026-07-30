@@ -7,7 +7,7 @@ class MealInitial extends MealState {}
 class MealLoading extends MealState {}
 
 class MealLoaded extends MealState {
-  final List<Meal> meals;
+  final List<MealEntity> meals;
   MealLoaded(this.meals);
 }
 
