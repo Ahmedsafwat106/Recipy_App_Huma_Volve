@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'core/di/service_locator.dart';
+import 'features/recipe/data/models/category_model.dart';
+import 'features/recipe/data/models/meal_model.dart';
 import 'features/recipe/presentation/screens/seafood_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+  Hive.registerAdapter(CategoryModelAdapter());
+  Hive.registerAdapter(MealModelAdapter());
+
   await setupServiceLocator();
   runApp(const RecipeApp());
 }

@@ -1,10 +1,21 @@
+import 'package:hive/hive.dart';
 import '../../domain/entities/meal_entity.dart';
 
-class MealModel extends MealEntity {
-  const MealModel({
-    required super.idMeal,
-    required super.strMeal,
-    required super.strMealThumb,
+part 'meal_model.g.dart';
+
+@HiveType(typeId: 1)
+class MealModel extends HiveObject {
+  @HiveField(0)
+  final String idMeal;
+  @HiveField(1)
+  final String strMeal;
+  @HiveField(2)
+  final String strMealThumb;
+
+  MealModel({
+    required this.idMeal,
+    required this.strMeal,
+    required this.strMealThumb,
   });
 
   factory MealModel.fromJson(Map<String, dynamic> json) {
@@ -12,6 +23,14 @@ class MealModel extends MealEntity {
       idMeal: json['idMeal'] ?? '',
       strMeal: json['strMeal'] ?? '',
       strMealThumb: json['strMealThumb'] ?? '',
+    );
+  }
+
+  MealEntity toEntity() {
+    return MealEntity(
+      idMeal: idMeal,
+      strMeal: strMeal,
+      strMealThumb: strMealThumb,
     );
   }
 }
